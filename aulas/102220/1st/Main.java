@@ -17,7 +17,7 @@ public class Main extends JFrame implements ActionListener, ItemListener {
   private ArrayList<Empregado> lista = new ArrayList<Empregado>();
   
   private ButtonGroup bg;
-  private Field nome, departamento, campo, campo1, campo2, campo3; 
+  private Field nome, departamento, salarioAssalariado, descontosAssalariado, vendasComissionado, comissaoComissionado, bonusComissionado, salarioComissionado, horasHorista, salarioHorista;
   private JButton adicionar, exibir, exibirAssalariado, exibirComissionado, exibirComissionadoAssalariado, exibirHorista;
   private JPanel painelAssalariado, painelComissionado, painelComissionadoAssalariado, painelGeral, painelHorista;
   private JRadioButton assalariado, comissionado, comissionadoAssalariado, horista;
@@ -66,57 +66,57 @@ public class Main extends JFrame implements ActionListener, ItemListener {
     // Fim Painel Geral
 
     // Criar campos Assalariado
-    campo = new Field("Salário", 10);
-    campo1 = new Field("Desconto", 10);
+    salarioAssalariado = new Field("Salário", 10);
+    descontosAssalariado = new Field("Desconto", 10);
     // Fim Criar campos Assalariado
 
     // Painel Assalariado
     painelAssalariado = new JPanel();
     painelAssalariado.setLayout(new BoxLayout(painelAssalariado, BoxLayout.Y_AXIS));
-    painelAssalariado.add(campo);
-    painelAssalariado.add(campo1);
+    painelAssalariado.add(salarioAssalariado);
+    painelAssalariado.add(descontosAssalariado);
     // Fim Painel Assalariado
 
     // Criar campos Comissionado
-    campo = new Field("Total de Vendas", 10);
-    campo1 = new Field("Taxa de Comissão", 10);
-    campo2 = new Field("Bonus", 10);
+    vendasComissionado = new Field("Total de Vendas", 10);
+    comissaoComissionado = new Field("Taxa de Comissão", 10);
+    bonusComissionado = new Field("Bonus", 10);
     // Fim Criar campos Comissionado
 
     // Painel Comissionado
     painelComissionado = new JPanel();
     painelComissionado.setLayout(new BoxLayout(painelComissionado, BoxLayout.Y_AXIS));
-    painelComissionado.add(campo);
-    painelComissionado.add(campo1);
-    painelComissionado.add(campo2);
+    painelComissionado.add(vendasComissionado);
+    painelComissionado.add(comissaoComissionado);
+    painelComissionado.add(bonusComissionado);
     // Fim Painel Comissionado
 
     // Criar campos Comissionado Assalariado
-    campo = new Field("Total de Vendas", 10);
-    campo1 = new Field("Taxa de Comissão", 10);
-    campo2 = new Field("Bonus", 10);
-    campo3 = new Field("Salário Base", 10);
+    vendasComissionado = new Field("Total de Vendas", 10);
+    comissaoComissionado = new Field("Taxa de Comissão", 10);
+    bonusComissionado = new Field("Bonus", 10);
+    salarioComissionado = new Field("Salário Base", 10);
     // Fim Criar campos Comissionado Assalariado
 
     // Painel Comissionado Assalariado
     painelComissionadoAssalariado = new JPanel();
     painelComissionadoAssalariado.setLayout(new BoxLayout(painelComissionadoAssalariado, BoxLayout.Y_AXIS));
-    painelComissionadoAssalariado.add(campo);
-    painelComissionadoAssalariado.add(campo1);
-    painelComissionadoAssalariado.add(campo2);
-    painelComissionadoAssalariado.add(campo3);
+    painelComissionadoAssalariado.add(vendasComissionado);
+    painelComissionadoAssalariado.add(comissaoComissionado);
+    painelComissionadoAssalariado.add(bonusComissionado);
+    painelComissionadoAssalariado.add(salarioComissionado);
     // Fim Painel Comissionado Assalariado
     
     // Criar campos Horista
-    campo = new Field("Horas Trabalhadas", 10);
-    campo1 = new Field("Salário/hora", 10);
+    horasHorista = new Field("Horas Trabalhadas", 10);
+    salarioHorista = new Field("Salário/hora", 10);
     // Fim Criar campos Horista
 
     // Painel Horista
     painelHorista = new JPanel();
     painelHorista.setLayout(new BoxLayout(painelHorista, BoxLayout.Y_AXIS));
-    painelHorista.add(campo);
-    painelHorista.add(campo1);
+    painelHorista.add(horasHorista);
+    painelHorista.add(salarioHorista);
     // Fim Painel Horista
 
     // Padrão de visibilidade dos Painéis
@@ -220,7 +220,84 @@ public class Main extends JFrame implements ActionListener, ItemListener {
   public void actionPerformed(ActionEvent e) {
     String s = "", title = "";
     if(e.getSource() == adicionar) {
-
+      String n = nome.getValue(), d = departamento.getValue();
+      if(assalariado.isSelected()) {
+        Double salario, desconto;
+        String sal = salarioAssalariado.getValue(), desc = descontosAssalariado.getValue();
+        title = "Sucesso";
+        try {
+          salario = Double.parseDouble(sal);
+          try {
+            desconto = Double.parseDouble(desc);
+            Assalariado a = new Assalariado(n, d, salario, desconto);
+            lista.add(a);
+            JOptionPane.showMessageDialog(null, "Inserido com sucesso!", title, JOptionPane.INFORMATION_MESSAGE);
+          } catch(NumberFormatException err) {
+            title = "Erro";
+            JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+          }
+        } catch(NumberFormatException err) {
+          title = "Erro";
+          JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+        }
+      } else if(comissionado.isSelected()) {
+        String v = vendasComissionado.getValue(), c = comissaoComissionado.getValue(), b = bonusComissionado.getValue();
+        Double vendas, comissao, bonus;
+        try {
+          vendas = Double.parseDouble(v);
+          try {
+            comissao = Double.parseDouble(c);
+            try {
+              bonus = Double.parseDouble(b);
+              if(comissionadoAssalariado.isSelected()) {
+                String sal = salarioComissionado.getValue();
+                Double salario;
+                try {
+                  salario = Double.parseDouble(sal);
+                  ComissionadoAssalariado ca = new ComissionadoAssalariado(n, d, vendas, comissao, bonus, salario);
+                  lista.add(ca);
+                  JOptionPane.showMessageDialog(null, "Inserido com sucesso!", title, JOptionPane.INFORMATION_MESSAGE);
+                } catch(NumberFormatException err) {
+                  title = "Erro";
+                  JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+                }
+              } else {
+                Comissionado com = new Comissionado(n, d, vendas, comissao, bonus);
+                lista.add(com);
+                JOptionPane.showMessageDialog(null, "Inserido com sucesso!", title, JOptionPane.INFORMATION_MESSAGE);
+              }
+            } catch(NumberFormatException err) {
+              title = "Erro";
+              JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+            }
+          } catch(NumberFormatException err) {
+            title = "Erro";
+            JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+          }
+        } catch(NumberFormatException err) {
+          title = "Erro";
+          JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+        }
+      } else if(horista.isSelected()) {
+        String h = horasHorista.getValue(), sh = salarioHorista.getValue();
+        Double salario;
+        Integer horas;
+        try {
+          horas = Integer.parseInt(h);
+          try {
+            salario = Double.parseDouble(sh);
+            Horista ho = new Horista(n, d, horas, salario);
+            lista.add(ho);
+            JOptionPane.showMessageDialog(null, "Inserido com sucesso!", title, JOptionPane.INFORMATION_MESSAGE);
+          } catch(NumberFormatException err) {
+            title = "Erro";
+            JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+          }
+        } catch(NumberFormatException err) {
+          title = "Erro";
+          JOptionPane.showMessageDialog(null, err.getStackTrace(), title, JOptionPane.ERROR_MESSAGE);
+        }
+      }
     } else if(e.getSource() == exibir) {
       for(int i = 0; i < lista.size(); i++)
         s += lista.get(i).toString();
