@@ -67,58 +67,62 @@ public class RegPagamento extends JComponent {
         if(selected.getNome().isEmpty()) {
           JOptionPane.showMessageDialog(null, "Selecione o cliente.", "ERRO", JOptionPane.ERROR_MESSAGE);
         } else {
-          if(painelNorte.getValor() <= 0) {
-            JOptionPane.showMessageDialog(null, "Não é possível fazer um pagamento inverso (Somos uma empresa privada, é você quem tem que nos pagar).", "ERRO", JOptionPane.ERROR_MESSAGE);
+          if(painelNorte.getData().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Se você vai pagar, tem que ter ocorrido em algum momento passado, e não em um momento inexistente.", "ERRO", JOptionPane.ERROR_MESSAGE);
           } else {
-            // 1 - Cartão | 2 - Cheque | 3 - Dinheiro
-            switch(painelCentro.getSelectedPayment()) {
-              case 1: {
-                Integer nc = -1;
-                String[] data = painelCentro.getCartaoData();
-
-                try {
-                  nc = Integer.parseInt(data[0]);
-                } catch(NumberFormatException e) {
-                  JOptionPane.showMessageDialog(null, "Número de cartão inválido", "ERRO", JOptionPane.ERROR_MESSAGE);
+            if(painelNorte.getValor() <= 0) {
+              JOptionPane.showMessageDialog(null, "Não é possível fazer um pagamento inverso (Somos uma empresa privada, é você quem tem que nos pagar).", "ERRO", JOptionPane.ERROR_MESSAGE);
+            } else {
+              // 1 - Cartão | 2 - Cheque | 3 - Dinheiro
+              switch(painelCentro.getSelectedPayment()) {
+                case 1: {
+                  Integer nc = -1;
+                  String[] data = painelCentro.getCartaoData();
+  
+                  try {
+                    nc = Integer.parseInt(data[0]);
+                  } catch(NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Número de cartão inválido", "ERRO", JOptionPane.ERROR_MESSAGE);
+                  }
+                  
+                  if(nc != -1) {
+                    Cartao novo = new Cartao(painelNorte.getData(), selected, painelNorte.getValor(), nc, data[1]);
+                    lista.add(novo);
+                    JOptionPane.showMessageDialog(null, "Pagamento efetuado!", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+                  
+                    painelNorte.limparTexto();
+                    painelCentro.limparTexto();
+                  }
+  
+                  break;
                 }
-                
-                if(nc != -1) {
-                  Cartao novo = new Cartao(painelNorte.getData(), selected, painelNorte.getValor(), nc, data[1]);
+                case 2: {
+                  Integer nc = -1;
+                  String[] data = painelCentro.getChequeData();
+  
+                  try {
+                    nc = Integer.parseInt(data[0]);
+                  } catch(NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Nº de Cheque inválido!", "ERRO", JOptionPane.ERROR_MESSAGE);
+                  }
+  
+                  if(nc != -1) {
+                    Cheque novo = new Cheque(painelNorte.getData(), selected, painelNorte.getValor(), nc, data[1]);
+                    lista.add(novo);
+                    JOptionPane.showMessageDialog(null, "Pagamento efetuado!", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+                  
+                    painelNorte.limparTexto();
+                    painelCentro.limparTexto();
+                  }
+                  break;
+                }
+                case 3: {
+                  Dinheiro novo = new Dinheiro(painelNorte.getData(), selected, painelNorte.getValor());
                   lista.add(novo);
                   JOptionPane.showMessageDialog(null, "Pagamento efetuado!", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
-                
                   painelNorte.limparTexto();
-                  painelCentro.limparTexto();
+                  break;
                 }
-
-                break;
-              }
-              case 2: {
-                Integer nc = -1;
-                String[] data = painelCentro.getChequeData();
-
-                try {
-                  nc = Integer.parseInt(data[0]);
-                } catch(NumberFormatException e) {
-                  JOptionPane.showMessageDialog(null, "Nº de Cheque inválido!", "ERRO", JOptionPane.ERROR_MESSAGE);
-                }
-
-                if(nc != -1) {
-                  Cheque novo = new Cheque(painelNorte.getData(), selected, painelNorte.getValor(), nc, data[1]);
-                  lista.add(novo);
-                  JOptionPane.showMessageDialog(null, "Pagamento efetuado!", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
-                
-                  painelNorte.limparTexto();
-                  painelCentro.limparTexto();
-                }
-                break;
-              }
-              case 3: {
-                Dinheiro novo = new Dinheiro(painelNorte.getData(), selected, painelNorte.getValor());
-                lista.add(novo);
-                JOptionPane.showMessageDialog(null, "Pagamento efetuado!", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
-                painelNorte.limparTexto();
-                break;
               }
             }
           }
